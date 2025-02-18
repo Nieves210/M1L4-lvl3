@@ -1,6 +1,7 @@
 import aiohttp  # Eşzamansız HTTP istekleri için bir kütüphane
 import random
 import asyncio
+from datetime import datetime, timedelta
 
 class Pokemon:
     pokemons = {}
@@ -41,11 +42,13 @@ class Pokemon:
 
     async def info(self):
         # Pokémon hakkında bilgi döndüren bir metot
+        
         if not self.name:
+
             self.name = await self.get_name()  # Henüz yüklenmemişse bir adın geri alınması
         return f"Pokémonunuzun ismi: {self.name}, Pokemonun sağlığı: {self.hp}, Pokemonun gücü: {self.power}"  # Pokémon'un adını içeren dizeyi döndürür
     
-
+    
     async def attack(self, enemy):
         if isinstance(enemy, Wizard):
             chance = random.randint(1, 5)
@@ -59,17 +62,36 @@ class Pokemon:
             return f"Pokémon eğitmeni @{self.pokemon_trainer}, @{enemy.pokemon_trainer}'ni yendi!"
                 
 
+async def feed(self, feed_interval=20, hp_increase=10):
+    current_time = datetime.now()
+    delta_time = timedelta(seconds=feed_interval)
+    self.last_feed_time= datetime.now()
+    if (current_time - self.last_feed_time) > delta_time:
+        self.hp += hp_increase
+        self.last_feed_time = current_time
+        return f"Pokémon'un sağlığı geri yüklenir. Mevcut sağlık: {self.hp}"
+    else:
+        return f"Pokémonunuzu şu zaman besleyebilirsiniz: {current_time+delta_time}"
+
+
+
 class Wizard(Pokemon):
-    pass
+    async def attack(self,enemy):
+        return await super().attack(enemy)
+    
+    def feed(self):
+        return super().feed(feed_interval=10)
 
 class Fighter(Pokemon):
-     async def attack(self, enemy):
+    async def attack(self, enemy):
         super_power = random.randint(5, 15)
         self.power += super_power
         result = await super().attack(enemy)
         self.power -= super_power
         return result + f"\nDovuscu Pokémon süper saldırı kullandı. Eklenen guc: {super_power}"
-     
+
+    def feed(self):
+        return super().feed(hp_increase=20)
 
 
 
@@ -96,5 +118,8 @@ async def main():
 # asyncio döngüsü ile çalıştır
 asyncio.run(main())               
                                         
+                                        
+                         
+
                                         
                          
