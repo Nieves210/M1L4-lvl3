@@ -59,5 +59,26 @@ async def attack(ctx):
             await ctx.send("Savaşmak için her iki katılımcının da Pokemon'a sahip olması gerekir!")
     else:
         await ctx.send("Saldırmak istediğiniz kullanıcıyı etiketleyerek belirtin.")
-        
+
+@bot.command()
+async def info(ctx):
+    if ctx.author.name in Pokemon.pokemons:
+        pok = Pokemon.pokemons[ctx.author.name]
+        pokemon_info = await pok.info()
+        await ctx.send(f"{ctx.author.mention}, {pokemon_info}")
+    else:
+        await ctx.send(f"{ctx.author.mention}, şu anda bir Pokémon'unuz yok! `!go` komutunu kullanarak bir Pokémon oluşturabilirsiniz.")
+
+
+@bot.command()
+async def feed(ctx):
+    author=ctx.author.name
+    if author in Pokemon.pokemons:
+        pokemon=Pokemon.pokemons[author]
+        result=await pokemon.feed()
+        await ctx.send(result)
+    else:
+        await ctx.send("You should create a pokemon first")
+
+
 bot.run(token)
